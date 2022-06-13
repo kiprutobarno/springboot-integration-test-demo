@@ -14,7 +14,7 @@ public class ProductService {
     private ProductRepository repository;
 
     public Product saveProduct(Product product) {
-        return this.repository.save(product);
+        return repository.save(product);
     }
 
     public List<Product> saveProducts(List<Product> products) {
