@@ -1,6 +1,9 @@
 package com.ywalakamar.crud.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,5 +22,10 @@ public class ProductController {
     public Product createpProduct(@RequestBody Product product) {
         product = service.saveProduct(product);
         return product;
+    }
+
+    @GetMapping
+    public List<Product> findAllProducts() {
+        return service.getProducts();
     }
 }
