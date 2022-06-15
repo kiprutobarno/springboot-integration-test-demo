@@ -1,6 +1,6 @@
 package com.ywalakamar.crud;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
@@ -41,6 +41,7 @@ class CrudApplicationTests {
 	}
 
 	@Test
+	@Sql(statements = "TRUNCATE TABLE products", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 	void testCreateProduct() {
 		Product product = new Product("Earphones", 2, 700.00);
 		Product response = rest.postForObject(baseUrl, product, Product.class);
@@ -53,7 +54,7 @@ class CrudApplicationTests {
 	/* Test getProducts() method */
 	@Test
 	@Sql(statements = "INSERT INTO products (id, name, quantity, price) VALUES (2,'charger', 1, 750)", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-	@Sql(statements = "DELETE FROM products WHERE name='charger'", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+	@Sql(statements = "TRUNCATE TABLE products", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 	void testGetProducts() {
 		ResponseEntity<List<Product>> response = rest.exchange(baseUrl, HttpMethod.GET, null,
 				new ParameterizedTypeReference<List<Product>>() {
@@ -68,14 +69,9 @@ class CrudApplicationTests {
 	/* Test getProductByName() method */
 	@Test
 	@Sql(statements = "INSERT INTO products (id, name, quantity, price) VALUES (3,'Samsung Galaxy S10', 1, 50000)", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-	@Sql(statements = "DELETE FROM products WHERE name='Samsung Galaxy S10'", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+	@Sql(statements = "TRUNCATE TABLE products", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 	void testGetProductByName() {
-		ResponseEntity<Product> response = rest.exchange(baseUrl + "/name?name=Samsung Galaxy S10", HttpMethod.GET,
-				null,
-				new ParameterizedTypeReference<Product>() {
-
-				});
-		Product product = response.getBody();
+		Product product = rest.getForObject(baseUrl + "/name?name=Samsung Galaxy S10", Product.class);
 		assertEquals("Samsung Galaxy S10", product.getName());
 		assertEquals(50000.0, product.getPrice());
 		assertEquals(1, product.getQuantity());
@@ -85,15 +81,17 @@ class CrudApplicationTests {
 	/* Test updateProduct() method */
 	@Test
 	@Sql(statements = "INSERT INTO products (id, name, quantity, price) VALUES (8,'Mac Book Pro', 3, 250000.00)", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-	@Sql(statements = "DELETE FROM products WHERE name='Mac Book Air'", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+	@Sql(statements = "TRUNCATE TABLE products", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 	void testUpdateProduct() {
 		Product product = new Product("Mac Book Air", 4, 180000.00);
 		rest.put(baseUrl + "/update/{id}", product, 8);
 
 		Product dbProduct = repository.findById(8).get();
-		assertEquals("Mac Book Air", dbProduct.getName());
-		assertEquals(180000.00, dbProduct.getPrice());
-		assertEquals(4, dbProduct.getQuantity());
+		assertAll(
+				() -> assertNotNull(dbProduct),
+				() -> assertEquals("Mac Book Air", dbProduct.getName()),
+				() -> assertEquals(180000.00, dbProduct.getPrice()),
+				() -> assertEquals(4, dbProduct.getQuantity()));
 
 	}
 
