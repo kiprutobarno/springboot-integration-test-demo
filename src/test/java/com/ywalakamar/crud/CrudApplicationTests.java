@@ -82,4 +82,19 @@ class CrudApplicationTests {
 
 	}
 
+	/* Test updateProduct() method */
+	@Test
+	@Sql(statements = "INSERT INTO products (id, name, quantity, price) VALUES (8,'Mac Book Pro', 3, 250000.00)", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+	@Sql(statements = "DELETE FROM products WHERE name='Mac Book Air'", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+	void testUpdateProduct() {
+		Product product = new Product("Mac Book Air", 4, 180000.00);
+		rest.put(baseUrl + "/update/{id}", product, 8);
+
+		Product dbProduct = repository.findById(8).get();
+		assertEquals("Mac Book Air", dbProduct.getName());
+		assertEquals(180000.00, dbProduct.getPrice());
+		assertEquals(4, dbProduct.getQuantity());
+
+	}
+
 }
