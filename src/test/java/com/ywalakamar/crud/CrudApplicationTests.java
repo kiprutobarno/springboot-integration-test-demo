@@ -65,4 +65,21 @@ class CrudApplicationTests {
 
 	}
 
+	/* Test getProductByName() method */
+	@Test
+	@Sql(statements = "INSERT INTO products (id, name, quantity, price) VALUES (3,'Samsung Galaxy S10', 1, 50000)", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+	@Sql(statements = "DELETE FROM products WHERE name='Samsung Galaxy S10'", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+	void testGetProductByName() {
+		ResponseEntity<Product> response = rest.exchange(baseUrl + "/name?name=Samsung Galaxy S10", HttpMethod.GET,
+				null,
+				new ParameterizedTypeReference<Product>() {
+
+				});
+		Product product = response.getBody();
+		assertEquals("Samsung Galaxy S10", product.getName());
+		assertEquals(50000.0, product.getPrice());
+		assertEquals(1, product.getQuantity());
+
+	}
+
 }
