@@ -95,4 +95,15 @@ class CrudApplicationTests {
 
 	}
 
+	/* Test deleteProduct() method */
+	@Test
+	@Sql(statements = "INSERT INTO products (id, name, quantity, price) VALUES (2,'iPhone 13 Pron Max', 1, 400000)", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+	@Sql(statements = "TRUNCATE TABLE products", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+	void testDeleteProduct() {
+		assertEquals(1, repository.findAll().size());
+		rest.delete(baseUrl + "/delete/{id}", 2);
+		assertEquals(0, repository.findAll().size());
+
+	}
+
 }
