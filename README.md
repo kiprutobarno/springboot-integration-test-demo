@@ -1,5 +1,5 @@
-# integration-test-demo
+# spring Boot Integration Test Demo
 
 ### Build and Test Status
 
-[![CircleCI](https://circleci.com/gh/ywalakamar/integration-test-demo/tree/main.svg?style=svg)](https://circleci.com/gh/ywalakamar/integration-test-demo/tree/main)
+[![CircleCI](https://circleci.com/gh/ywalakamar/springboot-integration-test-demo/tree/main.svg?style=svg)](https://circleci.com/gh/ywalakamar/springboot-integration-test-demo/tree/main)
